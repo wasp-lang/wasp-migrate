@@ -6,11 +6,11 @@ Official tool for migrating your Wasp project from an older to a newer version.
 
 ### Migrate from Wasp 0.11 to 0.12
 
-Run `npx wasp-migrate <dir>` in your terminal while positioned in the parent dir of your Wasp project (so one level above your Wasp project).
+Run `npx wasp-migrate <your-wasp-project-dir-name>` in your terminal while positioned in the parent dir of your Wasp project (so one level above your Wasp project).
 
 This will perform initial part of migrating your Wasp project from 0.11 to 0.12, but will not do the complete migration, since some steps (auth) need to be done manually.
 
-## Contributors Corner
+## Contributor's Corner
 
 ### How it works
 
