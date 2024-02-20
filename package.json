@@ -1,0 +1,23 @@
+{
+  "name": "ilakovac-wasp-migrate",
+  "private": false,
+  "version": "0.0.4",
+  "type": "module",
+  "bin": {
+    "ilakovac-wasp-migrate": "dist/index.js"
+  },
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "bundle": "rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "rollup": "^4.12.0",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-shebang-bin": "^0.0.6"
+  }
+}
