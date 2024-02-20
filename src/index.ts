@@ -65,7 +65,6 @@ async function migrate(): Promise<void> {
     if (fs.existsSync(oldPublicDir)) {
       fs.cpSync(oldPublicDir, publicDir, {
         recursive: true,
-        // Replaced `overwrite` with `force`
         force: true
       });
     }
@@ -75,7 +74,6 @@ async function migrate(): Promise<void> {
     console.log(`5. Copying the contents of ${oldProjectDirName}/src into ${projectDirName}/src...`);
     fs.cpSync(path.join(oldProjectDirName, 'src'), path.join(projectDirName, 'src'), {
       recursive: true,
-      // Replaced `overwrite` with `force`
       force: false
     });
   }
@@ -88,13 +86,19 @@ async function migrate(): Promise<void> {
       path.join('server', 'tsconfig.json'),
       path.join('shared', 'tsconfig.json'),
     ].forEach((filePathInSrc) => {
-      fs.unlinkSync(path.join(srcDir, filePathInSrc));
-    })
-    // Delete client/public if it exists.
-    const publicDirInSrc = path.join(srcDir, 'client', 'public');
-    if (fs.existsSync(publicDirInSrc)) {
-      fs.rmSync(publicDirInSrc, { recursive: true });
-    }
+      const filePath = path.join(srcDir, filePathInSrc);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    });
+    [
+      path.join('client', 'public'),
+    ].forEach((dirPathInSrc) => {
+      const dirPath = path.join(srcDir, dirPathInSrc);
+      if (fs.existsSync(dirPath)) {
+        fs.rmSync(dirPath, { recursive: true });
+      }
+    });
   }
 
   {
@@ -148,7 +152,6 @@ async function migrate(): Promise<void> {
       const newGitignoreLines = fs.readFileSync(gitignorePath, 'utf8').split('\n');
       const linesToAdd = oldGitignoreLines.filter((line) => !newGitignoreLines.includes(line));
       fs.appendFileSync(gitignorePath, linesToAdd.join('\n'));
-
     }
   }
 

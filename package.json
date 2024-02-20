@@ -1,7 +1,11 @@
 {
   "name": "wasp-migrate",
   "private": false,
-  "version": "0.0.4",
+  "version//": [
+    "NOTE: Changing the version number on the `main` branch will automatically trigger deployment",
+    "of the new version of the package on npm!"
+  ],
+  "version": "1.0.0",
   "type": "module",
   "bin": {
     "wasp-migrate": "dist/index.js"
@@ -12,12 +16,13 @@
     "bundle": "rollup -c"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Wasp Team",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.11.19",
     "rollup": "^4.12.0",
     "rollup-plugin-esbuild": "^6.1.1",
-    "rollup-plugin-shebang-bin": "^0.0.6"
+    "rollup-plugin-shebang-bin": "^0.0.6",
+    "typescript": "^5.3.3"
   }
 }
