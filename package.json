@@ -1,10 +1,10 @@
 {
-  "name": "ilakovac-wasp-migrate",
+  "name": "wasp-migrate",
   "private": false,
   "version": "0.0.4",
   "type": "module",
   "bin": {
-    "ilakovac-wasp-migrate": "dist/index.js"
+    "wasp-migrate": "dist/index.js"
   },
   "description": "",
   "main": "./dist/index.js",
