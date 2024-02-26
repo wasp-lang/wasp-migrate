@@ -226,8 +226,12 @@ async function sleep(ms: number): Promise<void> {
 }
 
 function obtainWaspFileNameInProjectDir(projectDirName: string): string {
-  const files = fs.readdirSync(projectDirName);
-  const waspFiles = files.filter((file) => file.endsWith('.wasp'));
+  const files = fs.readdirSync(projectDirName, {
+    withFileTypes: true,
+  });
+  const waspFiles = files
+    .filter((file) => file.isFile() && file.name.endsWith(".wasp"))
+    .map((file) => file.name);
   if (waspFiles.length === 0) {
     console.error(`Error: No .wasp file found in ${projectDirName}`);
     process.exit(1);
