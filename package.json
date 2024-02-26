@@ -5,7 +5,7 @@
     "NOTE: Changing the version number on the `main` branch will automatically trigger deployment",
     "of the new version of the package on npm!"
   ],
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "bin": {
     "wasp-migrate": "dist/index.js"

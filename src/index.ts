@@ -18,12 +18,14 @@ const DEV_MODE = process.env['WASP_MIGRATE_DEV'];
 
 const WASP_BIN = DEV_MODE ? 'wasp-cli' : 'wasp';
 
+const newProjectWaspFileName = 'main.wasp';
+
 async function migrate(): Promise<void> {
   assertWaspVersion();
 
   const projectDirName = obtainProjectDirName();
 
-  const mainWaspPath = path.join(projectDirName, 'main.wasp');
+  const oldProjectWaspFilename = obtainWaspFileNameInProjectDir(projectDirName);
   const wasprootPath = path.join(projectDirName, '.wasproot');
   const publicDir = path.join(projectDirName, 'public');
   const srcDir = path.join(projectDirName, 'src');
@@ -107,23 +109,25 @@ async function migrate(): Promise<void> {
   }
 
   {
-    console.log('8. Copying main.wasp from old project to new project...');
-    fs.copyFileSync(path.join(oldProjectDirName, 'main.wasp'), path.join(projectDirName, 'main.wasp'));
+    console.log(`8. Copying ${oldProjectWaspFilename} from old project to new project...`);
+    fs.copyFileSync(path.join(oldProjectDirName, oldProjectWaspFilename), path.join(projectDirName, newProjectWaspFileName));
   }
 
+  const newProjectWaspFilePath = path.join(projectDirName, newProjectWaspFileName);
+
   {
-    console.log('9. Updating main.wasp (0.11 -> 0.12, @server -> @src/server, @client -> @src/client)...');
-    const mainWaspContent = fs.readFileSync(mainWaspPath, 'utf8');
+    console.log(`9. Updating ${newProjectWaspFileName} (0.11 -> 0.12, @server -> @src/server, @client -> @src/client)...`);
+    const mainWaspContent = fs.readFileSync(newProjectWaspFilePath, 'utf8');
     const updatedMainWaspContent = mainWaspContent
           .replace(/version\s*:\s*"\^0\.11\.\d+"/g, 'version: "^0.12.0"')
           .replace(/"@server\//g, '"@src/server/')
           .replace(/"@client\//g, '"@src/client/');
-    fs.writeFileSync(mainWaspPath, updatedMainWaspContent);
+    fs.writeFileSync(newProjectWaspFilePath, updatedMainWaspContent);
   }
 
   {
-    console.log('10. Moving the dependencies from main.wasp into package.json...');
-    const mainWaspContent = fs.readFileSync(mainWaspPath, 'utf8');
+    console.log(`10. Moving the dependencies from ${newProjectWaspFileName} into package.json...`);
+    const mainWaspContent = fs.readFileSync(newProjectWaspFilePath, 'utf8');
     const waspDepsStrMatches = mainWaspContent.match(/(,)?\s*dependencies\s*:\s*\[[^\]]+\]/);
     if (waspDepsStrMatches) {
       const waspDepsStr = waspDepsStrMatches[0];
@@ -141,7 +145,7 @@ async function migrate(): Promise<void> {
       const updatedPackageJsonContent = packageJsonContent.replace(/"dependencies"\s*:\s*\{/, `"dependencies": {\n${packageJsonDepsStr},`);
 
       fs.writeFileSync(packageJsonPath, updatedPackageJsonContent);
-      fs.writeFileSync(mainWaspPath, updatedMainWaspContent);
+      fs.writeFileSync(newProjectWaspFilePath, updatedMainWaspContent);
     }
   }
 
@@ -158,7 +162,7 @@ async function migrate(): Promise<void> {
   {
     console.log('12. Copying the rest of relevant top level files and dirs...');
     fs.readdirSync(oldProjectDirName).forEach((item) => {
-      if (!['.gitignore', 'main.wasp', 'src', '.wasp', '.waspinfo', '.wasproot', 'node_modules'].includes(item)) {
+      if (!['.gitignore', oldProjectWaspFilename, 'src', '.wasp', '.waspinfo', '.wasproot', 'node_modules'].includes(item)) {
         const oldItemPath = path.join(oldProjectDirName, item);
         const newItemPath = path.join(projectDirName, item);
         if (fs.lstatSync(oldItemPath).isDirectory()) {
@@ -219,6 +223,20 @@ async function printWarning(): Promise<void> {
 
 async function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function obtainWaspFileNameInProjectDir(projectDirName: string): string {
+  const files = fs.readdirSync(projectDirName);
+  const waspFiles = files.filter((file) => file.endsWith('.wasp'));
+  if (waspFiles.length === 0) {
+    console.error(`Error: No .wasp file found in ${projectDirName}`);
+    process.exit(1);
+  }
+  if (waspFiles.length > 1) {
+    console.error(`Error: More than one .wasp file found in ${projectDirName}`);
+    process.exit(1);
+  }
+  return waspFiles[0];
 }
 
 migrate()
