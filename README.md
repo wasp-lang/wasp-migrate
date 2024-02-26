@@ -22,7 +22,7 @@ This will perform initial part of migrating your Wasp project from 0.11 to 0.12,
 
 Run `npm run bundle` to build the code and then run the `./dist/index.js` from the parent directory of the Wasp project you want to test it on.
 
-You can additionaly set `WASP_MIGRATE_DEV` env var to tell it to use `wasp-cli` instead of `wasp` bin.
+You can additionally set `WASP_MIGRATE_DEV`` env var to tell it to use `wasp-cli` instead of `wasp` bin.
 
 Example (where `websockets-realtime-voting` is a Wasp app inside `wasp/examples/` dir):
 ```
